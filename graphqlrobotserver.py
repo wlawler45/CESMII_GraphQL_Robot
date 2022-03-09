@@ -91,18 +91,18 @@ class GraphQL_sender:
         self.perform_graphql_request(smp_query)
         smp_query = """ 
             mutation MyMutation4 {
-              updateAttribute(input: { patch: { intValue: \""""+str(device_info.device.name)+"""\" }, id: \""""+str(self.ID_Dict["DeviceIdentifier"])+"""\" }) {
+              updateAttribute(input: { patch: { stringValue: \""""+str(device_info.device.name)+"""\" }, id: \""""+str(self.ID_Dict["DeviceIdentifier"])+"""\" }) {
                 attribute {
-                 intValue
+                 stringValue
                  }
               }
             }"""
         self.perform_graphql_request(smp_query)
         smp_query = """ 
             mutation MyMutation4 {
-              updateAttribute(input: { patch: { intValue: \""""+str(device_info.manufacturer.name)+"""\" }, id: \""""+str(self.ID_Dict["DeviceManufacturer"])+"""\" }) {
+              updateAttribute(input: { patch: { stringValue: \""""+str(device_info.manufacturer.name)+"""\" }, id: \""""+str(self.ID_Dict["DeviceManufacturer"])+"""\" }) {
                 attribute {
-                 intValue
+                 stringValue
                  }
               }
             }"""
@@ -285,7 +285,7 @@ def main():
           But be aware this is short-lived (you set the expiry, see Authenticator comments below) and you will need to handle
           expiry and renewal -- as shown below. As an alternative, you could start your life-cycle with authentication, or
           you could authenticate with each request (assuming bandwidth and latency aren't factors in your use-case). '''
-    current_bearer_token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiaW50ZXJmYWNldGVjaF9ncm91cCIsImV4cCI6MTY0NjY4MDA1MCwidXNlcl9uYW1lIjoiaW50ZXJmYWNldGVjaDI3IiwiYXV0aGVudGljYXRvciI6ImludGVyZmFjZXRlY2giLCJhdXRoZW50aWNhdGlvbl9pZCI6IjI1IiwiaWF0IjoxNjQ2Njc4MjUwLCJhdWQiOiJwb3N0Z3JhcGhpbGUiLCJpc3MiOiJwb3N0Z3JhcGhpbGUifQ.nbuybIT_vRYMK1zTa2cYQFoyvFAVGe4DPWke0SwmFiE"
+    current_bearer_token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiaW50ZXJmYWNldGVjaF9ncm91cCIsImV4cCI6MTY0Njg0MDA5NiwidXNlcl9uYW1lIjoiaW50ZXJmYWNldGVjaDI3IiwiYXV0aGVudGljYXRvciI6ImludGVyZmFjZXRlY2giLCJhdXRoZW50aWNhdGlvbl9pZCI6IjI5IiwiaWF0IjoxNjQ2ODM4Mjk2LCJhdWQiOiJwb3N0Z3JhcGhpbGUiLCJpc3MiOiJwb3N0Z3JhcGhpbGUifQ.4-bK6jJJmrCaQKf-ztOd1hCLprMg-4D_SBzSsEKBIhY"
     # eg: Bearer eyJyb2xlIjoieW91cl9yb2xlIiwiZXhwIjoxNDk5OTk5OTk5LCJ1c2VyX25hbWUiOiJ5b3VydXNlcm5hbWUiLCJhdXRoZW50aWNhdG9yIjoieW91cmF1dGgiLCJhdXRoZW50aWNhdGlvbl9pZCI6Ijk5IiwiaWF0Ijo5OTk5OTk5OTk5LCJhdWQiOiJhdWQiLCJpc3MiOiJpc3MifQ==
     
     parser = argparse.ArgumentParser()
@@ -304,13 +304,14 @@ def main():
 
     RRC.RegisterStdRobDefServiceTypes(RRN)
     robosewclient='192.168.51.61'
-    url='rr+tcp://'+robosewclient+':58651?service=robot'
+    #url='rr+tcp://'+robosewclient+':58651?service=robot'://[fe80::b852:412a:6117:baa0]:11111/?
+    url='rr+tcp://[fe80::b852:412a:6117:baa0]:11111/?service=robot'
     robot_sub=RRN.SubscribeService(url)
     robot_sub.ClientConnectFailed += connect_failed
     state_w = robot_sub.SubscribeWire("robot_state")
     cmd_w = robot_sub.SubscribeWire('position_command')
     vel_w = robot_sub.SubscribeWire("velocity_command")
-
+    time.sleep(1)
     robot=robot_sub.GetDefaultClientWait(1)
     robot_device_info=robot.device_info
     robot_info=robot.robot_info
